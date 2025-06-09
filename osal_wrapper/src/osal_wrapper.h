@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,6 +55,9 @@ int osal_mb_delete(osal_mb_t mb);
 int osal_printf(const char* fmt, ...);
 
 int osal_sleep_ms(uint32_t ms);
+
+void* osal_malloc(size_t size);
+void  osal_free(void* ptr);
 
 #ifdef __cplusplus
 }

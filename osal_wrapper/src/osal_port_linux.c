@@ -8,6 +8,7 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include "osal_wrapper.h"
 
 // ===================== 线程实现略 =====================
@@ -302,4 +303,12 @@ int osal_printf(const char* fmt, ...)
 int osal_sleep_ms(uint32_t ms)
 {
     return usleep(ms * 1000);
+}
+
+void* osal_malloc(size_t size) {
+    return malloc(size);
+}
+
+void osal_free(void* ptr) {
+    free(ptr);
 }
