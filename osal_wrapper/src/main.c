@@ -121,9 +121,9 @@ void thread_func7(void* parameter)
 {
     char *msg;
     osal_sleep_ms(100);
-    osal_printf("Thread 5 waiting for message\n");
+    osal_printf("Thread 7 waiting for message\n");
     osal_mq_recv(mq, (void *)&msg, sizeof(char *), OSAL_WAIT_FOREVER);
-    osal_printf("Thread 5 receive message: %s\n", msg);
+    osal_printf("Thread 7 receive message: %s\n", msg);
     osal_free(msg);
 }
 
@@ -132,12 +132,12 @@ void thread_func8(void* parameter)
     char *msg = NULL;
     msg = (char *)osal_malloc(32);
     if (msg == NULL) {
-        osal_printf("Thread 6 malloc failed\n");
+        osal_printf("Thread 8 malloc failed\n");
         return;
     }
     snprintf(msg, 32, "Hello from Thread 6");
     osal_sleep_ms(2000);
-    osal_printf("Thread 6 send message\n");
+    osal_printf("Thread 8 send message\n");
     osal_mq_send(mq, (const void *)&msg, sizeof(char *), OSAL_WAIT_FOREVER);
 }
 
@@ -158,13 +158,49 @@ int main_mq_demo(void)
     osal_thread_delete(t2);
 }
 
+osal_mb_t mb;
 
-int main()
+void thread_func9(void* parameter)
+{
+    uint32_t value = 0;
+    osal_sleep_ms(100);
+    osal_printf("Thread 9 waiting for mb\n");
+    osal_mb_recv(mb, (uint32_t *)&value, OSAL_WAIT_FOREVER);
+    osal_printf("Thread 9 receive mb: %08X\n", value);
+}
+
+void thread_func10(void* parameter)
+{
+    uint32_t value = 0xFF010203;
+    osal_sleep_ms(2000);
+    osal_printf("Thread 10 send mb\n");
+    osal_mb_send(mb, value, OSAL_WAIT_FOREVER);
+}
+
+int main_mb_demo(void)
+{
+    mb = osal_mb_create("mb", 1);
+    osal_thread_t t1 = osal_thread_create("t1", thread_func9, NULL, 1024, 10, 10);
+    osal_thread_t t2 = osal_thread_create("t2", thread_func10, NULL, 1024, 10, 10);
+
+    osal_printf("===================== Mb Demo =====================\n");
+
+    osal_thread_start(t1);
+    osal_thread_start(t2);
+
+    osal_sleep_ms(3000);
+
+    osal_thread_delete(t1);
+    osal_thread_delete(t2);
+}
+
+int main(void)
 {
     osal_printf("OSAL Demostrate!\n");
-    // main_thread_demo();
-    // main_sem_demo();
-    // main_mutex_demo();
+    main_thread_demo();
+    main_sem_demo();
+    main_mutex_demo();
     main_mq_demo();
+    main_mb_demo();
     return 0;
 }
