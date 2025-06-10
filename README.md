@@ -5,20 +5,20 @@ This project provides an OSAL (Operating System Abstraction Layer) wrapper that 
 ## Project Structure
 
 ```
-osal_wrapper
-├── src
-│   └── main.c        # Contains a simple "Hello World" program
-├── CMakeLists.txt    # CMake configuration file
-└── README.md         # Project documentation
+osal_wrapper/
+├── osal_wrapper/      # OSAL library source and header files
+├── example/           # Example usage code
+├── CMakeLists.txt     # Top-level CMake configuration file
+└── README.md          # Project documentation
 ```
 
-## Building the Project
+## Building and Installing the Project
 
-To build the project, follow these steps:
+To build and install the project, follow these steps:
 
 1. Ensure you have CMake installed on your system.
-2. Open a terminal and navigate to the `osal_wrapper` directory.
-3. Create a build directory:
+2. Open a terminal and navigate to the project root directory.
+3. Create a build directory and enter it:
    ```
    mkdir build
    cd build
@@ -31,21 +31,34 @@ To build the project, follow these steps:
    ```
    make
    ```
+6. Install the library and headers (may require sudo):
+   ```
+   sudo make install
+   ```
 
-## Running the Program
+After installation, header files will be in `/usr/local/include`, and the library and CMake package files will be in `/usr/local/lib` and `/usr/local/lib/cmake/osal_wrapper`.
 
-After building the project, you can run the executable generated in the `build` directory:
+## Usage in Other Projects (find_package)
 
+After installation, you can use `find_package(osal_wrapper REQUIRED)` in your own CMake project:
+
+```cmake
+find_package(osal_wrapper REQUIRED)
+add_executable(my_app main.c)
+target_link_libraries(my_app PRIVATE osal_wrapper::osal_wrapper)
 ```
-./main
+
+No need to manually set include paths; they are handled by the package.
+
+## Example
+
+See the `example/` directory for usage, or use the following minimal example:
+
+```c
+#include "osal_wrapper.h"
+
+int main() {
+    osal_printf("Hello, OSAL!\n");
+    return 0;
+}
 ```
-
-This will output:
-
-```
-Hello, World!
-```
-
-## Usage in Other Projects
-
-To use this OSAL wrapper in other CMake projects, you can include it as a subdirectory or link it as a library. Make sure to adjust your CMake configuration accordingly to include the necessary paths and link against the OSAL wrapper.
